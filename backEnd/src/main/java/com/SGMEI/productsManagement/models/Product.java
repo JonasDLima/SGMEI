@@ -26,7 +26,10 @@ public class Product {
 	private Integer quantidadeEstoqueProduto;
 	
 	@Column(name="categoria_produto")
-	private Integer categoriaCliente;
+	private Integer categoriaProduto;
+	
+	@Column(name="marca_produto")
+	private String marcaProduto;
 
 	public long getIdProduto() {
 		return idProduto;
@@ -60,11 +63,19 @@ public class Product {
 		this.quantidadeEstoqueProduto = quantidadeEstoqueProduto;
 	}
 
-	public Integer getCategoriaCliente() {
-		return categoriaCliente;
+	public Integer getCategoriaProduto() {
+		return categoriaProduto;
 	}
 
-	private void setCategoriaCliente(Integer categoriaCliente) {
-		this.categoriaCliente = categoriaCliente;
+	private void setCategoriaProduto(Integer categoriaProduto) {
+		this.categoriaProduto = categoriaProduto;
+	}
+
+	public String getMarcaProduto() {
+		return marcaProduto;
+	}
+
+	public void setMarcaProduto(String marcaProduto) {
+		this.marcaProduto = marcaProduto;
 	}
 }

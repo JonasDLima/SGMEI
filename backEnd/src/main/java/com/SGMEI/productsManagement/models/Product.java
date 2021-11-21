@@ -50,12 +50,12 @@ public class Product {
 		this.descricaoProduto = descricaoProduto;
 	}
 
-	public Double getValFinalProduto() {
+	public Double getValUnitarioProduto() {
 		return valUnitarioProduto;
 	}
 
-	private void setValFinalProduto(Double valFinalProduto) {
-		this.valUnitarioProduto = valFinalProduto;
+	private void setValUnitarioProduto(Double valUnitarioProduto) {
+		this.valUnitarioProduto = valUnitarioProduto;
 	}
 
 	public Integer getQuantidadeEstoqueProduto() {

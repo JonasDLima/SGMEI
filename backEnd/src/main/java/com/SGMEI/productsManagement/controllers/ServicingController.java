@@ -7,21 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.SGMEI.productsManagement.models.Product;
-import com.SGMEI.productsManagement.repositorys.ProductRepository;
+import com.SGMEI.productsManagement.models.Servicing;
+import com.SGMEI.productsManagement.repositorys.ServicingRepository;
 
 @RestController
-@RequestMapping("/produtos")
-public class ProductController {
+@RequestMapping("/servicos")
+public class ServicingController {
 	
 	@Autowired
-	private ProductRepository productRepository;
+	private ServicingRepository servicingRepository;
 	
 	@GetMapping
-	public List<Product> getProducts(){
+	public List<Servicing> getServicing() {
 		
-		List<Product> listaProdutos = productRepository.getAll();
-		return listaProdutos;
+		List<Servicing> listaServicos = servicingRepository.getAll();
+		return listaServicos;
 	}
 
 }

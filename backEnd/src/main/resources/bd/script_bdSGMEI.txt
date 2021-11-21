@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS `produtos` ;
 CREATE TABLE IF NOT EXISTS `produtos` (
   `id_produto` INT NOT NULL AUTO_INCREMENT,
   `descricao_produto` VARCHAR(45) NOT NULL,
-  `val_final_produto` DOUBLE NOT NULL,
+  `val_unitario_produto` DOUBLE NOT NULL,
   `quantidade_estoque_produto` INT NULL,
   `categoria_produto` CHAR(1) NOT NULL,
   `marca_produto` VARCHAR(45) NOT NULL,
@@ -34,12 +34,14 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `clientes` ;
 
 CREATE TABLE IF NOT EXISTS `clientes` (
-  `cpf` INT NOT NULL,
+  `id_cliente` INT NOT NULL AUTO_INCREMENT,
+  `cpf` VARCHAR(11) NOT NULL,
   `nom_cliente` VARCHAR(45) NOT NULL,
   `tel_cliente` VARCHAR(45) NOT NULL,
   `email_cliente` VARCHAR(45) NULL,
   `dat_nascimento_cliente` VARCHAR(45) NULL,
-  PRIMARY KEY (`cpf`))
+  PRIMARY KEY (`id_cliente`),
+  UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -57,29 +59,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `manutencoes`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `manutencoes` ;
-
-CREATE TABLE IF NOT EXISTS `manutencoes` (
-  `id_manutencao` INT NOT NULL AUTO_INCREMENT,
-  `orsamento_manutencao` TINYINT NULL,
-  `dat_entrada_manutencao` DATE NULL,
-  `dat_saida_manutencao` DATE NULL,
-  `val_orcamento_manutencao` DOUBLE NOT NULL,
-  `andamento_manutencao` INT NOT NULL,
-  `clientes_cpf` INT NOT NULL,
-  PRIMARY KEY (`id_manutencao`),
-  INDEX `fk_Manutencoes_Clientes1_idx` (`clientes_cpf` ASC) VISIBLE,
-  CONSTRAINT `fk_Manutencoes_Clientes1`
-    FOREIGN KEY (`clientes_cpf`)
-    REFERENCES `clientes` (`cpf`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `servicos`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `servicos` ;
@@ -89,12 +68,17 @@ CREATE TABLE IF NOT EXISTS `servicos` (
   `descricao_servico` VARCHAR(45) NOT NULL,
   `val_servico` DOUBLE NOT NULL,
   `val_daPeca_servico` DOUBLE NULL,
-  `manutencoes_id_manutencao` INT NOT NULL,
+  `orcamento` TINYINT NULL,
+  `dat_entrada_servico` DATE NULL,
+  `dat_saida_servico` DATE NULL,
+  `val_final_servico` DOUBLE NOT NULL,
+  `andamento_servico` CHAR(1) NULL,
+  `clientes_id_cliente` INT NOT NULL,
   PRIMARY KEY (`id_servico`),
-  INDEX `fk_Servicos_Manutencoes1_idx` (`manutencoes_id_manutencao` ASC) VISIBLE,
-  CONSTRAINT `fk_Servicos_Manutencoes1`
-    FOREIGN KEY (`manutencoes_id_manutencao`)
-    REFERENCES `manutencoes` (`id_manutencao`)
+  INDEX `fk_servicos_clientes1_idx` (`clientes_id_cliente` ASC) VISIBLE,
+  CONSTRAINT `fk_servicos_clientes1`
+    FOREIGN KEY (`clientes_id_cliente`)
+    REFERENCES `clientes` (`id_cliente`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -107,7 +91,6 @@ DROP TABLE IF EXISTS `vendas` ;
 
 CREATE TABLE IF NOT EXISTS `vendas` (
   `id_venda` INT NOT NULL AUTO_INCREMENT,
-  `cod_venda` INT NOT NULL,
   `dat_venda` DATE NOT NULL,
   `tot_aPagar_venda` DOUBLE NOT NULL,
   `tipo_pagamento_venda` INT NOT NULL,
@@ -122,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   INDEX `fk_vendas_servicos1_idx` (`servicos_id_servico` ASC) VISIBLE,
   CONSTRAINT `fk_Vendas_Clientes1`
     FOREIGN KEY (`clientes_cpf`)
-    REFERENCES `clientes` (`cpf`)
+    REFERENCES `clientes` (`id_cliente`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Vendas_FormasDePagam1`
@@ -144,14 +127,10 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `itensVenda` ;
 
 CREATE TABLE IF NOT EXISTS `itensVenda` (
-  `id_itenVenda` INT NOT NULL AUTO_INCREMENT,
-  `descricao_itenVenda` VARCHAR(45) NOT NULL,
-  `cod_itenVenda` INT NOT NULL,
   `quantidade_itenVenda` INT NOT NULL,
-  `val_unitario_itenVenda` DOUBLE NOT NULL,
+  `val_final_itenVenda` DOUBLE NOT NULL,
   `vendas_id_venda` INT NOT NULL,
   `produtos_id_produto` INT NOT NULL,
-  PRIMARY KEY (`id_itenVenda`),
   INDEX `fk_Produtos_has_Vendas_Vendas1_idx` (`vendas_id_venda` ASC) VISIBLE,
   INDEX `fk_ItensVenda_Produtos1_idx` (`produtos_id_produto` ASC) VISIBLE,
   CONSTRAINT `fk_Produtos_has_Vendas_Vendas1`
@@ -180,7 +159,99 @@ CREATE TABLE IF NOT EXISTS `agendamentos` (
   INDEX `fk_Agendamentos_Clientes1_idx` (`clientes_cpf` ASC) VISIBLE,
   CONSTRAINT `fk_Agendamentos_Clientes1`
     FOREIGN KEY (`clientes_cpf`)
-    REFERENCES `clientes` (`cpf`)
+    REFERENCES `clientes` (`id_cliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `pais`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `pais` ;
+
+CREATE TABLE IF NOT EXISTS `pais` (
+  `id_pais` INT NOT NULL AUTO_INCREMENT,
+  `nom_pais` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_pais`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `estado`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `estado` ;
+
+CREATE TABLE IF NOT EXISTS `estado` (
+  `id_estado` INT NOT NULL AUTO_INCREMENT,
+  `nom_estado` VARCHAR(45) NOT NULL,
+  `UF_estado` VARCHAR(45) NOT NULL,
+  `pais_id_pais` INT NOT NULL,
+  PRIMARY KEY (`id_estado`),
+  INDEX `fk_estado_pais1_idx` (`pais_id_pais` ASC) VISIBLE,
+  CONSTRAINT `fk_estado_pais1`
+    FOREIGN KEY (`pais_id_pais`)
+    REFERENCES `pais` (`id_pais`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `cidade`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `cidade` ;
+
+CREATE TABLE IF NOT EXISTS `cidade` (
+  `id_cidade` INT NOT NULL AUTO_INCREMENT,
+  `nom_cidade` VARCHAR(45) NOT NULL,
+  `estado_id_estado` INT NOT NULL,
+  PRIMARY KEY (`id_cidade`),
+  INDEX `fk_cidade_estado1_idx` (`estado_id_estado` ASC) VISIBLE,
+  CONSTRAINT `fk_cidade_estado1`
+    FOREIGN KEY (`estado_id_estado`)
+    REFERENCES `estado` (`id_estado`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `bairro`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `bairro` ;
+
+CREATE TABLE IF NOT EXISTS `bairro` (
+  `id_bairro` INT NOT NULL AUTO_INCREMENT,
+  `nom_bairro` VARCHAR(45) NOT NULL,
+  `cidade_id_cidade` INT NOT NULL,
+  PRIMARY KEY (`id_bairro`),
+  INDEX `fk_bairro_cidade1_idx` (`cidade_id_cidade` ASC) VISIBLE,
+  CONSTRAINT `fk_bairro_cidade1`
+    FOREIGN KEY (`cidade_id_cidade`)
+    REFERENCES `cidade` (`id_cidade`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `logradouro`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `logradouro` ;
+
+CREATE TABLE IF NOT EXISTS `logradouro` (
+  `id_logradouro` INT NOT NULL AUTO_INCREMENT,
+  `nom_logradouro` VARCHAR(45) NOT NULL,
+  `num_logradouro` VARCHAR(45) NOT NULL,
+  `complemento_logradouro` VARCHAR(45) NULL,
+  `ponto_referencia_logradouro` VARCHAR(45) NULL,
+  `bairro_id_bairro` INT NOT NULL,
+  PRIMARY KEY (`id_logradouro`),
+  INDEX `fk_logradouro_bairro1_idx` (`bairro_id_bairro` ASC) VISIBLE,
+  CONSTRAINT `fk_logradouro_bairro1`
+    FOREIGN KEY (`bairro_id_bairro`)
+    REFERENCES `bairro` (`id_bairro`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -193,16 +264,15 @@ DROP TABLE IF EXISTS `enderecos` ;
 
 CREATE TABLE IF NOT EXISTS `enderecos` (
   `id_endereco` INT NOT NULL AUTO_INCREMENT,
-  `cep` VARCHAR(8) NOT NULL,
-  `pais` VARCHAR(45) NOT NULL,
-  `estado` VARCHAR(45) NOT NULL,
-  `cidade` VARCHAR(45) NOT NULL,
-  `bairro` VARCHAR(45) NOT NULL,
-  `logradouro` VARCHAR(45) NOT NULL,
-  `numero` VARCHAR(45) NOT NULL,
-  `complemento` VARCHAR(45) NULL,
-  `pontoReferencia` VARCHAR(45) NULL,
-  PRIMARY KEY (`id_endereco`))
+  `cep` VARCHAR(8) NULL,
+  `logradouro_id_logradouro` INT NOT NULL,
+  PRIMARY KEY (`id_endereco`),
+  INDEX `fk_enderecos_logradouro1_idx` (`logradouro_id_logradouro` ASC) VISIBLE,
+  CONSTRAINT `fk_enderecos_logradouro1`
+    FOREIGN KEY (`logradouro_id_logradouro`)
+    REFERENCES `logradouro` (`id_logradouro`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -212,28 +282,26 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `enderecoCliente` ;
 
 CREATE TABLE IF NOT EXISTS `enderecoCliente` (
-  `id_enderecoCliente` INT NOT NULL AUTO_INCREMENT,
   `endereco_entrega_enderecoCliente` TINYINT NOT NULL,
   `enderecos_id_endereco` INT NOT NULL,
   `clientes_cpf` INT NOT NULL,
-  PRIMARY KEY (`id_enderecoCliente`),
-  INDEX `fk_EnderecoCliente_Clientes1_idx` (`clientes_cpf` ASC) VISIBLE,
   INDEX `fk_EnderecoCliente_Enderecos1_idx` (`enderecos_id_endereco` ASC) VISIBLE,
-  CONSTRAINT `fk_EnderecoCliente_Clientes1`
-    FOREIGN KEY (`clientes_cpf`)
-    REFERENCES `clientes` (`cpf`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `fk_enderecoCliente_clientes1_idx` (`clientes_cpf` ASC) VISIBLE,
   CONSTRAINT `fk_EnderecoCliente_Enderecos1`
     FOREIGN KEY (`enderecos_id_endereco`)
     REFERENCES `enderecos` (`id_endereco`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_enderecoCliente_clientes1`
+    FOREIGN KEY (`clientes_cpf`)
+    REFERENCES `clientes` (`id_cliente`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 /* Insert data from produtos */
 INSERT INTO produtos (id_produto, descricao_produto,
-  val_final_produto, quantidade_estoque_produto,
+  val_unitario_produto, quantidade_estoque_produto,
   categoria_produto, marca_produto, garantia_produto) VALUES
     (1, 'FONE S/FIO', 89.99, 10, 1, 'JBL', 30),
     (2, 'FONE S/FIO', 129.99, 5, 1, 'BASIKE', 30),
@@ -242,11 +310,11 @@ INSERT INTO produtos (id_produto, descricao_produto,
     (5, 'TELA GALAXY PRIME 7', 250, 2, 2, 'SAMSUNG', 90);
 
 /* Insert data from clientes */
-INSERT INTO clientes (cpf, nom_cliente, tel_cliente,
+INSERT INTO clientes (id_cliente, cpf, nom_cliente, tel_cliente,
   email_cliente, dat_nascimento_cliente) VALUES
-    (26771215067, 'JOÃO DA SILVA CHAVIER', '27999459000', 'JAO.XAVIER@EMAIL.COM', '16/11/2000'),
-    (12111415165, 'MARIA APARECIDA DA SILVA', '28990872346', 'MARIA.CIDA@EMAIL.COM.BR', '10/09/1994'),
-    (88673257018, 'JUAN DEL PLATA', '32996457563', 'JUANZITO@EMAIL.COM', '10/05/2007');
+    (1, '26771215067', 'JOÃO DA SILVA CHAVIER', '27999459000', 'JAO.XAVIER@EMAIL.COM', '16/11/2000'),
+    (2, '12111415165', 'MARIA APARECIDA DA SILVA', '28990872346', 'MARIA.CIDA@EMAIL.COM.BR', '10/09/1994'),
+    (3 ,'88673257018', 'JUAN DEL PLATA', '32996457563', 'JUANZITO@EMAIL.COM', '10/05/2007');
 
 /* Insert data from formasDePagam */
 INSERT INTO formasDePagam (id_formDePagamento,
@@ -258,6 +326,19 @@ INSERT INTO formasDePagam (id_formDePagamento,
 
 /* Insert data from servicos */
 INSERT INTO servicos (id_servico, descricao_servico,
-  val_servico, val_daPeca_servicos) VALUES
-  (1, 'TROCA DE CONECTOR DE CARGA', 90, 0),
-  (2, 'TROCA DE TELA', 100, 0);
+  val_servico, val_daPeca_servico, orcamento, dat_entrada_servico,
+  dat_saida_servico, val_final_servico, andamento_servico, 	       clientes_id_cliente) VALUES
+  (1, 'TROCA DE CONECTOR DE CARGA', 90, 10, true, '2021/11/21',   '2021/11/30', 100, 0, 3),
+  (2, 'TROCA DE TELA', 100, 200, false, '2021/11/21', '2021/11/30',
+   300, 1, 1);
+  
+/* Insert data from pais */
+INSERT INTO pais (id_pais, nom_pais) VALUES
+  (1, 'BRASIL');
+  
+/* Insert data from estado */
+INSERT INTO estado (id_estado, nom_estado, UF_estado, pais_id_pais)   VALUES (1, 'ESPÍRITO SANTO', 'ES', 1);
+
+/* Insert data from cidade */
+INSERT INTO cidade (id_cidade, nom_cidade, estado_id_estado) VALUES
+  (1, 'VITÓRIA', 1);

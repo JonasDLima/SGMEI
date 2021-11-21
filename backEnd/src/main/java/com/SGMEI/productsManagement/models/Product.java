@@ -19,8 +19,8 @@ public class Product {
 	@Column(name="descricao_produto")
 	private String descricaoProduto;
 	
-	@Column(name="val_final_produto")
-	private Double valFinalProduto;
+	@Column(name="val_unitario_produto")
+	private Double valUnitarioProduto;
 	
 	@Column(name="quantidade_estoque_produto")
 	private Integer quantidadeEstoqueProduto;
@@ -30,6 +30,9 @@ public class Product {
 	
 	@Column(name="marca_produto")
 	private String marcaProduto;
+	
+	@Column(name="garantia_produto")
+	private String garantiaProduto;
 
 	public long getIdProduto() {
 		return idProduto;
@@ -48,11 +51,11 @@ public class Product {
 	}
 
 	public Double getValFinalProduto() {
-		return valFinalProduto;
+		return valUnitarioProduto;
 	}
 
 	private void setValFinalProduto(Double valFinalProduto) {
-		this.valFinalProduto = valFinalProduto;
+		this.valUnitarioProduto = valFinalProduto;
 	}
 
 	public Integer getQuantidadeEstoqueProduto() {
@@ -77,5 +80,13 @@ public class Product {
 
 	public void setMarcaProduto(String marcaProduto) {
 		this.marcaProduto = marcaProduto;
+	}
+	
+	public String getGarantiaProduto() {
+		return garantiaProduto;
+	}
+
+	public void setGarantiaProduto(String garantiaProduto) {
+		this.garantiaProduto = garantiaProduto;
 	}
 }

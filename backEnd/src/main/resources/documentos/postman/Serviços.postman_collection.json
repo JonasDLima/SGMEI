@@ -1,0 +1,27 @@
+{
+	"info": {
+		"_postman_id": "15fcfb17-9cdb-4cdc-a450-0e8028a84d31",
+		"name": "Serviços",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "consultaAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/servicos",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servicos"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -299,6 +299,19 @@ CREATE TABLE IF NOT EXISTS `enderecoCliente` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `usuarios`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `usuarios` ;
+
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id_usuario` INT NOT NULL AUTO_INCREMENT,
+  `login` VARCHAR(45) NULL,
+  `password` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`idUsuario`),
+  UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE)
+ENGINE = InnoDB;
+
 /* Insert data from produtos */
 INSERT INTO produtos (id_produto, descricao_produto,
   val_unitario_produto, quantidade_estoque_produto,
@@ -342,3 +355,7 @@ INSERT INTO estado (id_estado, nom_estado, UF_estado, pais_id_pais)   VALUES (1,
 /* Insert data from cidade */
 INSERT INTO cidade (id_cidade, nom_cidade, estado_id_estado) VALUES
   (1, 'VITÓRIA', 1);
+  
+/* Insert data from usuarios */
+INSERT INTO usuarios (id_usuario, login, password) VALUES
+    (1, admSGMEI, $2a$10$7PZlyb6H7uyOqWJic9Ppfu/rq/vTFlLqcaeQHFX/IuHY7B7Jj3Kcq);
